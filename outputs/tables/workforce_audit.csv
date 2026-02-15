@@ -1,0 +1,4 @@
+record,status,severity,alerts,remediation
+"{'warehouse': 'Berlin', 'notice_period_days': 3, 'monitoring_type': 'aggregate_metrics'}",ALERT,MEDIUM,['WORKS_COUNCIL_ALERT'],Increase notice period to >= 4 days and switch to aggregate/non-identifiable KPIs.
+"{'warehouse': 'Hamburg', 'notice_period_days': 7, 'monitoring_type': 'individual_performance_tracking'}",ALERT,HIGH,['GDPR_BETRIEBSRAT_VIOLATION'],Increase notice period to >= 4 days and switch to aggregate/non-identifiable KPIs.
+"{'warehouse': 'Munich', 'notice_period_days': 5, 'monitoring_type': 'aggregate_metrics'}",PASS,NONE,[],None required.

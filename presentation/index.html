@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Costco Germany 2026 | Board Strategy Deck</title>
+    <meta
+      name="description"
+      content="Board-grade strategy deck for Costco Germany 2026 market entry simulation."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  </head>
+  <body>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-grid"></div>
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span class="brand-text">Costco Germany 2026 | Executive Intelligence Deck</span>
+      </div>
+      <div class="topbar-actions">
+        <span id="metaVersion" class="chip">Model v2.0.0</span>
+        <a href="regulatory.html" class="btn">Regulatory Tab</a>
+        <a href="portfolio_map.html" class="btn">City Portfolio Map</a>
+        <button id="printButton" class="btn">Export / Print</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="slide hero" data-animate>
+        <p class="eyebrow">Market Entry Simulation Engine</p>
+        <h1>
+          Board Strategy Briefing
+          <span class="hero-accent">Germany Entry 2026</span>
+        </h1>
+        <p class="lead">
+          Evidence-calibrated strategic recommendation integrating macro stress, competitive response,
+          regulatory risk, and multi-year valuation.
+        </p>
+        <div class="hero-meta">
+          <div>
+            <span class="meta-label">As Of</span>
+            <span id="metaAsOf" class="meta-value">-</span>
+          </div>
+          <div>
+            <span class="meta-label">Payload Generated</span>
+            <span id="metaGenerated" class="meta-value">-</span>
+          </div>
+          <div>
+            <span class="meta-label">Recommended Strategy</span>
+            <span id="metaTopStrategy" class="meta-value">-</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-animate>
+        <div class="section-header">
+          <h2>Executive Thesis</h2>
+          <p>Three claims that determine whether Germany entry should scale, pause, or redesign.</p>
+        </div>
+        <div id="thesisCards" class="thesis-grid"></div>
+      </section>
+
+      <section class="slide" data-animate>
+        <div class="section-header">
+          <h2>Executive Signals</h2>
+          <p>Decision-critical indicators for capital allocation and launch governance.</p>
+        </div>
+        <div id="kpiGrid" class="kpi-grid"></div>
+      </section>
+
+      <section class="slide" data-animate>
+        <div class="section-header">
+          <h2>Strategy Ranking</h2>
+          <p>Risk-adjusted scorecard across macro scenarios with tail-risk penalties.</p>
+        </div>
+        <div class="chart-grid two-col">
+          <div class="panel">
+            <h3>Risk-Adjusted Strategy Score</h3>
+            <div id="decisionChart" class="plot"></div>
+          </div>
+          <div class="panel">
+            <h3>Decision Matrix</h3>
+            <div id="decisionTable" class="table-wrap"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-animate>
+        <div class="section-header">
+          <h2>Scenario and Downside Risk</h2>
+          <p>Contribution resilience by scenario and probability of negative outcomes.</p>
+        </div>
+        <div class="chart-grid two-col">
+          <div class="panel">
+            <h3>Scenario x Strategy Heatmap</h3>
+            <div id="scenarioHeatmap" class="plot"></div>
+          </div>
+          <div class="panel">
+            <h3>Probability of Loss</h3>
+            <div id="downsideChart" class="plot"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-animate>
+        <div class="section-header">
+          <h2>Capital Allocation</h2>
+          <p>5-year NPV and free cash flow trajectory under rollout and capex assumptions.</p>
+        </div>
+        <div class="chart-grid two-col">
+          <div class="panel">
+            <h3>5-Year NPV by Strategy</h3>
+            <div id="npvChart" class="plot"></div>
+          </div>
+          <div class="panel">
+            <h3>Free Cash Flow Paths</h3>
+            <div id="cashflowChart" class="plot"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-animate>
+        <div class="section-header">
+          <h2>Launch Readiness and Economics Surface</h2>
+          <p>Combined governance score and membership break-even profile across fee/discount combinations.</p>
+        </div>
+        <div class="chart-grid two-col">
+          <div class="panel">
+            <h3>Launch Readiness Index</h3>
+            <div id="readinessPanel" class="readiness-wrap"></div>
+          </div>
+          <div class="panel">
+            <h3>Break-Even Monthly Spend Surface</h3>
+            <div id="breakEvenChart" class="plot"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-animate>
+        <div class="section-header">
+          <h2>Risk and Compliance</h2>
+          <p>Marketing conversion blockers and regulatory controls required for launch.</p>
+        </div>
+        <div class="chart-grid two-col">
+          <div class="panel">
+            <h3>Marketing Audit</h3>
+            <div id="marketingAudit" class="stack-list"></div>
+          </div>
+          <div class="panel">
+            <h3>Regulatory Audit</h3>
+            <div id="complianceAudit" class="stack-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-animate>
+        <div class="section-header">
+          <h2>Evidence Register</h2>
+          <p>Traceability of all core data assumptions to official sources and reports.</p>
+        </div>
+        <div id="sourceCards" class="source-grid"></div>
+      </section>
+
+      <section class="slide" data-animate>
+        <div class="section-header">
+          <h2>Execution Roadmap</h2>
+          <p>Stage-gated deployment sequence with measurable decision checkpoints.</p>
+        </div>
+        <div id="roadmap" class="roadmap"></div>
+      </section>
+
+      <section class="slide" data-animate>
+        <div class="section-header">
+          <h2>Visual Appendix</h2>
+          <p>Analytical chart bank generated from the simulation engine.</p>
+        </div>
+        <div id="imageGallery" class="image-gallery"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Prepared for Board Review | Costco Germany 2026 Entry Program</span>
+      <span id="footerRefreshStatus">Refresh status: -</span>
+    </footer>
+
+    <script src="data/presentation_data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

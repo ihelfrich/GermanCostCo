@@ -1,0 +1,68 @@
+{
+  "generated_at": "2026-02-13T04:48:00.628582+00:00",
+  "overrides": {
+    "macro": {
+      "inflation_percent": 1.9
+    }
+  },
+  "checks": [
+    {
+      "source_id": "consumer_climate",
+      "url": "https://www.nim.org/en/consumer-climate/type/consumer-climate",
+      "status": "FAILED",
+      "extracted_value": null,
+      "error": "Parsed value failed anomaly guard (baseline=-24.1, parsed=-9.4, max_delta_abs=10.0)."
+    },
+    {
+      "source_id": "savings_rate_gross",
+      "url": "https://www.destatis.de/DE/Presse/Pressemitteilungen/2025/10/PD25_N059_81.html",
+      "status": "FAILED",
+      "extracted_value": null,
+      "error": "Parser returned no value or out-of-range value."
+    },
+    {
+      "source_id": "savings_rate_net",
+      "url": "https://www.destatis.de/DE/Presse/Pressemitteilungen/2025/10/PD25_N059_81.html",
+      "status": "FAILED",
+      "extracted_value": null,
+      "error": "Parser returned no value or out-of-range value."
+    },
+    {
+      "source_id": "inflation_2026",
+      "url": "https://economy-finance.ec.europa.eu/economic-surveillance-eu-member-states/country-pages/germany/economic-forecast-germany_en",
+      "status": "OK",
+      "extracted_value": 1.9,
+      "error": null
+    },
+    {
+      "source_id": "retail_growth_real",
+      "url": "https://www.destatis.de/DE/Presse/Pressemitteilungen/2026/02/PD26_038_45212.html",
+      "status": "FAILED",
+      "extracted_value": null,
+      "error": "Parser returned no value or out-of-range value."
+    },
+    {
+      "source_id": "min_wage_2026",
+      "url": "https://www.bmas.de/DE/Service/Gesetze-und-Gesetzesvorhaben/fuenfte-mindestlohnanpassungsverordnung-milov5.html",
+      "status": "FAILED",
+      "extracted_value": null,
+      "error": "Parser returned no value or out-of-range value."
+    },
+    {
+      "source_id": "min_wage_2027",
+      "url": "https://www.bmas.de/DE/Service/Gesetze-und-Gesetzesvorhaben/fuenfte-mindestlohnanpassungsverordnung-milov5.html",
+      "status": "FAILED",
+      "extracted_value": null,
+      "error": "Parser returned no value or out-of-range value."
+    },
+    {
+      "source_id": "discounter_share",
+      "url": "https://www.ehi.org/presse/preisbewusstes-einkaufen-discounter-legen-zu/",
+      "status": "FAILED",
+      "extracted_value": null,
+      "error": "Parser returned no value or out-of-range value."
+    }
+  ],
+  "quality_gate_passed": false,
+  "notes": "Only successful source parsers are written into overrides. Missing values fall back to defaults in config_loader.py."
+}

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Costco Germany 2026 | City Portfolio Map</title>
+    <meta name="description" content="City-level rollout optimization map for Costco Germany 2026." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="portfolio_map.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="dot"></span>
+        <span>Costco Germany 2026 | City Portfolio Optimizer</span>
+      </div>
+      <nav class="actions">
+        <a class="btn ghost" href="index.html">Executive Deck</a>
+        <a class="btn ghost" href="regulatory.html">Regulatory</a>
+        <a class="btn ghost" href="paper.html">Analytical Paper</a>
+        <button id="printButton" class="btn">Export</button>
+      </nav>
+    </header>
+
+    <main class="layout">
+      <section class="panel panel-map">
+        <div class="panel-head">
+          <h1>Germany Rollout Map</h1>
+          <p>City-level risk-adjusted launch prioritization derived from the simulation engine.</p>
+        </div>
+        <div id="kpiRow" class="kpi-row"></div>
+        <div id="map"></div>
+        <div class="legend">
+          <span><i style="background:#b71c1c"></i>Wave 1 Pilot</span>
+          <span><i style="background:#ef6c00"></i>Wave 2 Scale</span>
+          <span><i style="background:#546e7a"></i>Wave 3 Option</span>
+          <span><i style="background:#8e8e8e"></i>Hold</span>
+        </div>
+      </section>
+
+      <aside class="panel panel-side">
+        <div class="panel-head">
+          <h2>Filters</h2>
+        </div>
+        <div class="filters">
+          <label>
+            Launch Wave
+            <select id="waveFilter"></select>
+          </label>
+          <label>
+            Strategy
+            <select id="strategyFilter"></select>
+          </label>
+          <label>
+            Board Signal
+            <select id="signalFilter"></select>
+          </label>
+        </div>
+
+        <div class="panel-head compact">
+          <h2>City Ranking</h2>
+        </div>
+        <div id="cityTable" class="table-wrap"></div>
+      </aside>
+    </main>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="data/presentation_data.js"></script>
+    <script src="portfolio_map.js"></script>
+  </body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Costco Germany 2026 | Regulatory Intelligence Tab</title>
+    <meta
+      name="description"
+      content="Regulatory environment dashboard for Costco Germany 2026 market entry."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="regulatory.css" />
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  </head>
+  <body>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-grid"></div>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span class="brand-text">Costco Germany 2026 | Regulatory Intelligence</span>
+      </div>
+      <nav class="actions">
+        <a class="btn ghost" href="index.html">Executive Deck</a>
+        <a class="btn ghost" href="paper.html">Analytical Paper</a>
+        <a class="btn ghost" href="portfolio_map.html">City Map</a>
+        <button id="printButton" class="btn">Print / Export</button>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <p class="eyebrow">Dedicated Regulatory Tab</p>
+        <h1>Germany 2026 Regulatory Environment and Execution Risk</h1>
+        <p id="metaLine" class="meta-line">Loading verified legal registry...</p>
+        <div id="kpiRow" class="kpi-row"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Regulatory Timeline</h2>
+          <p>Legal go-live dates and triggering obligations that constrain launch sequencing.</p>
+        </div>
+        <div id="timelineChart" class="plot"></div>
+      </section>
+
+      <section class="panel two-col">
+        <article>
+          <div class="panel-head">
+            <h2>Risk Matrix</h2>
+            <p>Severity vs likelihood from statutory exposure and operational failure modes.</p>
+          </div>
+          <div id="riskMatrixChart" class="plot"></div>
+        </article>
+        <article>
+          <div class="panel-head">
+            <h2>Control Ownership</h2>
+            <p>Control-accountability by functional owner and count of obligations.</p>
+          </div>
+          <div id="ownerChart" class="plot"></div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Control Playbook</h2>
+          <p>What must be implemented before launch to keep legal exposure bounded.</p>
+        </div>
+        <div id="playbookTable" class="table-wrap"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Full Regulatory Register</h2>
+          <p>Machine-readable legal register with direct source URLs for every row.</p>
+        </div>
+        <div id="registerTable" class="table-wrap"></div>
+      </section>
+    </main>
+
+    <script src="data/presentation_data.js"></script>
+    <script src="regulatory.js"></script>
+  </body>
+</html>

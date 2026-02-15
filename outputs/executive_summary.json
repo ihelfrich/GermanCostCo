@@ -1,0 +1,26 @@
+{
+  "impulse_resistance_base": 2.284,
+  "labor_2026_eur": 6432920.0,
+  "labor_2027_eur": 6756880.0,
+  "labor_delta_pct": 5.0359712230215825,
+  "recommended_strategy": "subsidized_65_to_20",
+  "recommended_strategy_risk_adjusted_score": 10831325.890340671,
+  "recommended_strategy_npv_5y_eur": -159379778.5417326,
+  "base_standard_mean_contribution_eur": -3340128.668377827,
+  "base_standard_prob_loss": 1.0,
+  "marketing_reject_count": 2,
+  "compliance_summary": {
+    "green_claim_violations": 2,
+    "workforce_alerts": 2,
+    "high_severity_findings": 3,
+    "total_findings": 4
+  },
+  "refresh_generated_at": "2026-02-13T04:48:00.628582+00:00",
+  "refresh_ok_sources": 1,
+  "refresh_total_sources": 8,
+  "city_top3": [
+    "Berlin",
+    "Hamburg",
+    "Munich"
+  ]
+}

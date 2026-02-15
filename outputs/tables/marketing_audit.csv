@@ -1,0 +1,4 @@
+text,cue_count,decision,confidence_score,reason
+"High Quality, Low Price",0,REJECT,0.01243165085318582,Too vague for high uncertainty-avoidance market norms.
+Trusted value for families. Better prices every day.,0,REJECT,0.01243165085318582,Too vague for high uncertainty-avoidance market norms.
+"Bio oats, 2kg pack, EUR 2.49/kg, ISO 22000 certified, Energy class A, 12-month warranty, DIN EN tested, 15% protein.",16,CONSIDER,0.99,Sufficient concrete detail to reduce perceived purchase risk.

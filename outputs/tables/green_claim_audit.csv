@@ -1,0 +1,5 @@
+label,status,severity,rule,reason,remediation
+Climate Neutral household cleaner,VIOLATION,HIGH,"EmpCo Generic Green Claims Ban (effective Sept 27, 2026)",Generic claim(s) ['climate neutral'] without verified ISO certification ID.,Attach verifiable certification ID or remove generic claim language.
+"Eco-friendly detergent, ISO 14067 certified",PASS,NONE,EmpCo Generic Green Claims Ban,No banned generic claim or claim substantiated by ISO ID.,None required.
+Green packaging for paper towels,VIOLATION,HIGH,"EmpCo Generic Green Claims Ban (effective Sept 27, 2026)",Generic claim(s) ['green'] without verified ISO certification ID.,Attach verifiable certification ID or remove generic claim language.
+Low-emission logistics detergent ISO 14064-1,PASS,NONE,EmpCo Generic Green Claims Ban,No banned generic claim or claim substantiated by ISO ID.,None required.

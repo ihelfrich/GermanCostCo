@@ -1,0 +1,24 @@
+# Python caches
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.pytest_cache/
+
+# Local plotting cache
+.mpl_cache/
+
+# Node artifacts
+**/node_modules/
+webapp/dist/
+
+# OS/editor
+.DS_Store
+.vscode/
+
+# Local temp
+*.log
+
+# TypeScript build artifacts
+*.tsbuildinfo
+webapp/vite.config.js
+webapp/vite.config.d.ts
