@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node ./scripts/postbuild-routes.mjs",
     "preview": "vite preview",
     "prepare:data": "node ./scripts/prepare-data.mjs"
   },
