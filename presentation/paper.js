@@ -114,6 +114,163 @@ function renderSummary(payload) {
   document.getElementById("thesisLine").textContent = thesis;
 }
 
+function renderPartnerForeword(payload) {
+  const macro = payload.macro || {};
+  const cultural = payload.cultural || {};
+  const decision = payload.key_decision || {};
+  const exec = payload.executive_summary || {};
+  const compliance = exec.compliance_summary || {};
+
+  const paragraphs = [
+    `This paper is written from a simple strategic premise: Germany is not a weak market for value, it is a strict market for proof. Consumer climate at ${formatNumber(macro.consumer_climate_index || 0, 1)} and savings pressure at ${formatNumber(macro.savings_rate_percent || 0, 1)}% imply that households are not rejecting value retail, they are rejecting ambiguity in value capture.`,
+    `Cultural profile matters operationally. With uncertainty avoidance at ${formatNumber(cultural.uncertainty_avoidance || 0, 0)} and long-term orientation at ${formatNumber(cultural.long_term_orientation || 0, 0)}, conversion depends on quantified trust: unit economics in plain sight, high-information product copy, and visible compliance credibility at every customer touchpoint.`,
+    `The current recommendation (${decision.top_strategy || "-"}) should be interpreted as a first option in a controlled learning sequence, not as a permanent end-state. While downside probability improves, high-severity compliance findings (${formatNumber(compliance.high_severity_findings || 0, 0)}) and negative 5-year NPV require stage-gated expansion discipline.`,
+  ];
+
+  const target = document.getElementById("partnerForeword");
+  target.innerHTML = paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join("");
+}
+
+function mapRegulatoryImplication(category) {
+  const key = String(category || "").toLowerCase();
+  if (key.includes("marketing claims")) {
+    return "Generic sustainability language is high-risk; claims must be substantiated before deployment.";
+  }
+  if (key.includes("pricing")) {
+    return "Unit-price transparency must be consistent across shelf, promo, and digital channels.";
+  }
+  if (key.includes("packaging")) {
+    return "Packaging registration and EPR readiness are hard launch preconditions.";
+  }
+  if (key.includes("supply chain")) {
+    return "Due-diligence controls must be embedded in procurement and supplier governance.";
+  }
+  if (key.includes("labor governance")) {
+    return "Works-council rights directly affect scheduling and monitoring system rollout.";
+  }
+  if (key.includes("labor time")) {
+    return "Labor planning and time records must be compliant by design, not post-hoc.";
+  }
+  if (key.includes("data protection")) {
+    return "Customer and employee analytics require strict necessity and proportionality controls.";
+  }
+  if (key.includes("wage")) {
+    return "Payroll controls must absorb statutory wage-step updates without execution lag.";
+  }
+  if (key.includes("food labeling")) {
+    return "Product-language and mandatory particulars require QA/legal gatekeeping.";
+  }
+  return "Regulatory controls should be integrated into launch design.";
+}
+
+function renderRegulatoryNarrative(payload) {
+  const rows = payload.regulatory_environment || [];
+  const ordered = [...rows].sort((a, b) => {
+    const sev = asNum(b.severity_score_1_to_5) - asNum(a.severity_score_1_to_5);
+    if (sev !== 0) return sev;
+    return String(a.category).localeCompare(String(b.category));
+  });
+
+  const target = document.getElementById("paperRegulatoryNarrative");
+  target.innerHTML = ordered
+    .map((row) => {
+      const implication = mapRegulatoryImplication(row.category);
+      return `
+      <article class="discussion-card">
+        <p class="discussion-kicker">${escapeHtml(row.category || "Regulatory Domain")}</p>
+        <h3>${escapeHtml(row.regulation || "-")}</h3>
+        <p><strong>Trigger:</strong> ${escapeHtml(row.deadline_or_trigger || row.effective_date || "-")}</p>
+        <p><strong>Implication:</strong> ${escapeHtml(implication)}</p>
+        <p><strong>Owner:</strong> ${escapeHtml(row.operational_owner || "-")}</p>
+      </article>
+    `;
+    })
+    .join("");
+}
+
+function renderConsumerNarrative(payload) {
+  const macro = payload.macro || {};
+  const cultural = payload.cultural || {};
+  const labor = payload.labor_legal || {};
+  const benchmarks = payload.benchmarks || {};
+  const marketing = payload.marketing_audit || [];
+  const rejects = marketing.filter((row) => String(row.decision || "").toUpperCase() !== "CONSIDER").length;
+
+  const cards = [
+    {
+      kicker: "Savings Psychology",
+      title: "Precautionary Behavior Is Structurally High",
+      body: `Consumer climate ${formatNumber(macro.consumer_climate_index || 0, 1)} with savings rate ${formatNumber(macro.savings_rate_percent || 0, 1)}% indicates defensive household budgeting.`,
+    },
+    {
+      kicker: "Risk Culture",
+      title: "Uncertainty Avoidance Changes Conversion Physics",
+      body: `UAI ${formatNumber(cultural.uncertainty_avoidance || 0, 0)} implies buyers require concrete proof, not broad value slogans.`,
+    },
+    {
+      kicker: "Time Horizon",
+      title: "Long-Term Orientation Supports Durable Value Framing",
+      body: `LTO ${formatNumber(cultural.long_term_orientation || 0, 0)} favors annual savings logic over short-term promotion framing.`,
+    },
+    {
+      kicker: "U.S. vs Germany Gap",
+      title: "Indulgence Delta Requires Model Translation",
+      body: `Germany indulgence ${formatNumber(cultural.indulgence || 0, 0)} versus U.S. reference ${formatNumber(benchmarks.us_indulgence_reference || 68, 0)} reinforces rational-first messaging.`,
+    },
+    {
+      kicker: "Information Density",
+      title: "German Copy Expectations Are Materially Higher",
+      body: `${formatNumber(labor.standard_german_ad_information_cues_min || 7, 0)}+ cues expected vs U.S. typical ${formatNumber(labor.us_ad_information_cues_typical || 3, 0)}.`,
+    },
+    {
+      kicker: "Empirical Test",
+      title: "Creative Stress Test Confirms Friction",
+      body: `${formatNumber(rejects, 0)}/${formatNumber(marketing.length || 0, 0)} tested creatives failed the current information-density gate.`,
+    },
+  ];
+
+  document.getElementById("paperConsumerNarrative").innerHTML = cards
+    .map(
+      (card) => `
+      <article class="discussion-card">
+        <p class="discussion-kicker">${escapeHtml(card.kicker)}</p>
+        <h3>${escapeHtml(card.title)}</h3>
+        <p>${escapeHtml(card.body)}</p>
+      </article>
+    `
+    )
+    .join("");
+
+  const actions = [
+    {
+      action: "Mandate unit-price-first communication standards",
+      impact: "Aligns legal obligations and consumer trust formation.",
+      owner: "Commercial + Pricing Ops",
+    },
+    {
+      action: "Enforce 7+ cue templates in all POS and paid media",
+      impact: "Reduces ambiguity and lifts conversion under high-UAI conditions.",
+      owner: "Marketing + Category",
+    },
+    {
+      action: "Reframe annual membership fee into monthly net-benefit metric",
+      impact: "Addresses savings-trap behavior with budgeting-compatible messaging.",
+      owner: "Membership + CRM",
+    },
+    {
+      action: "Integrate compliance controls into launch playbooks",
+      impact: "Converts legal reliability into commercial execution speed.",
+      owner: "Legal + HR + Operations",
+    },
+  ];
+
+  renderTable("paperConsumerActions", actions, [
+    { key: "action", label: "Priority Action" },
+    { key: "impact", label: "Why It Matters" },
+    { key: "owner", label: "Owner" },
+  ]);
+}
+
 function renderDiscussion(payload) {
   const exec = payload.executive_summary || {};
   const scenarioRows = payload.scenario_summary || [];
@@ -370,6 +527,9 @@ async function init() {
   try {
     const payload = await loadData();
     renderSummary(payload);
+    renderPartnerForeword(payload);
+    renderRegulatoryNarrative(payload);
+    renderConsumerNarrative(payload);
     renderDiscussion(payload);
     renderBoardArgument(payload);
     renderStrategicEssay(payload);

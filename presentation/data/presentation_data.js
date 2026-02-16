@@ -3,7 +3,7 @@ window.PRESENTATION_DATA = {
     "model_name": "Costco Germany 2026 Market Entry Simulation Engine",
     "version": "2.0.0",
     "as_of_date": "2026-02-13",
-    "generated_at_utc": "2026-02-15T16:45:27.781113+00:00",
+    "generated_at_utc": "2026-02-16T01:42:40.737475+00:00",
     "currency": "EUR"
   },
   "executive_summary": {
@@ -48,6 +48,9 @@ window.PRESENTATION_DATA = {
     "uncertainty_avoidance": 65,
     "long_term_orientation": 83,
     "indulgence": 40
+  },
+  "benchmarks": {
+    "us_indulgence_reference": 68
   },
   "labor_legal": {
     "min_wage_2026_eur_per_hour": 13.9,

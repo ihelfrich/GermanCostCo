@@ -18,6 +18,11 @@ export default function RegulatoryPage() {
   const { data, loading, error } = usePresentationData();
   const rows = useMemo(() => (data?.regulatory_environment || []) as RegulatoryRow[], [data]);
   const summary = data?.regulatory_summary;
+  const macro = (data?.macro || {}) as Record<string, unknown>;
+  const cultural = (data?.cultural || {}) as Record<string, unknown>;
+  const labor = (data?.labor_legal || {}) as Record<string, unknown>;
+  const benchmarks = (data?.benchmarks || {}) as Record<string, unknown>;
+  const marketing = (data?.marketing_audit || []) as Array<Record<string, unknown>>;
 
   if (loading) return <div className="state-box">Loading regulatory intelligence...</div>;
   if (error) return <div className="state-box error">{error}</div>;
@@ -49,6 +54,68 @@ export default function RegulatoryPage() {
     return new Date(a.effective_date).getTime() - new Date(b.effective_date).getTime();
   });
 
+  const criticalActions = sortedBySeverity.slice(0, 4).map((row) => ({
+    item: `${row.category}: ${row.regulation}`,
+    owner: row.operational_owner,
+    action: row.requirement,
+  }));
+
+  const consumerRows = [
+    {
+      title: "Savings Trap Regime",
+      metric: `Climate ${formatNumber(Number(macro.consumer_climate_index || 0), 1)} | Savings ${formatNumber(Number(macro.savings_rate_percent || 0), 1)}%`,
+      implication: "Membership economics must be translated into explicit monthly household value.",
+    },
+    {
+      title: "Uncertainty Avoidance",
+      metric: `UAI ${formatNumber(Number(cultural.uncertainty_avoidance || 0), 0)}`,
+      implication: "Concrete detail and verifiable proof should replace broad positioning language.",
+    },
+    {
+      title: "Long-Term Orientation",
+      metric: `LTO ${formatNumber(Number(cultural.long_term_orientation || 0), 0)}`,
+      implication: "Frame membership as sustained annual optimization, not short-term promotions.",
+    },
+    {
+      title: "Indulgence Gap vs U.S.",
+      metric: `Germany ${formatNumber(Number(cultural.indulgence || 0), 0)} vs U.S. ${formatNumber(Number(benchmarks.us_indulgence_reference || 68), 0)}`,
+      implication: "Rational value architecture should dominate impulse-led merchandising narratives.",
+    },
+    {
+      title: "Information Cue Differential",
+      metric: `${formatNumber(Number(labor.standard_german_ad_information_cues_min || 7), 0)}+ vs U.S. ~${formatNumber(Number(labor.us_ad_information_cues_typical || 3), 0)}`,
+      implication: "Creative standards must enforce dense, technical, and price-transparent copy templates.",
+    },
+    {
+      title: "Observed Marketing Friction",
+      metric: `${formatNumber(marketing.filter((r) => String(r.decision || "").toUpperCase() !== "CONSIDER").length, 0)}/${formatNumber(marketing.length || 0, 0)} rejected`,
+      implication: "Creative QA is a measurable conversion control, not a brand preference question.",
+    },
+  ];
+
+  const consumerActions = [
+    {
+      action: "Mandate unit-price-first communication",
+      impact: "Aligns regulatory compliance and shopper trust formation.",
+      owner: "Commercial + Pricing Ops",
+    },
+    {
+      action: "Institutionalize 7+ cue copy templates",
+      impact: "Reduces ambiguity and improves conversion in high-UAI contexts.",
+      owner: "Marketing + Category",
+    },
+    {
+      action: "Translate annual fee into monthly net-benefit score",
+      impact: "Directly addresses savings-pressure behavior and budgeting logic.",
+      owner: "Membership + CRM",
+    },
+    {
+      action: "Expose compliance controls in launch governance",
+      impact: "Converts legal reliability into operational speed and board confidence.",
+      owner: "Legal + HR + Operations",
+    },
+  ];
+
   return (
     <section className="page-block">
       <div className="hero-card regulatory">
@@ -75,6 +142,75 @@ export default function RegulatoryPage() {
         <article className="kpi-card">
           <div className="kpi-label">Largest Explicit Fine</div>
           <div className="kpi-value">{formatEur(Number(summary?.max_explicit_fine_eur || 0), 0)}</div>
+        </article>
+      </div>
+
+      <article className="panel signature-panel">
+        <h2>Partner Regulatory Doctrine</h2>
+        <p className="panel-subtext">
+          In Germany, legal and labor controls define rollout velocity. Governance quality is therefore a commercial
+          variable, not only a legal variable.
+        </p>
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Priority Action</th>
+                <th>Owner</th>
+                <th>Control Requirement</th>
+              </tr>
+            </thead>
+            <tbody>
+              {criticalActions.map((action) => (
+                <tr key={action.item}>
+                  <td>{action.item}</td>
+                  <td>{action.owner}</td>
+                  <td>{action.action}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <div className="panel-grid">
+        <article className="panel">
+          <h2>Consumer Mindset and Cultural Differences</h2>
+          <p className="panel-subtext">
+            Behavioral translation layer required to adapt Costco's U.S. model to German household decision logic.
+          </p>
+          <div className="insight-list">
+            {consumerRows.map((row) => (
+              <div key={row.title} className="kpi-card">
+                <div className="kpi-label">{row.title}</div>
+                <div className="small-text">{row.metric}</div>
+                <div style={{ marginTop: 6 }}>{row.implication}</div>
+              </div>
+            ))}
+          </div>
+        </article>
+        <article className="panel">
+          <h2>Commercial Translation Priorities</h2>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Priority Action</th>
+                  <th>Why It Matters</th>
+                  <th>Owner</th>
+                </tr>
+              </thead>
+              <tbody>
+                {consumerActions.map((row) => (
+                  <tr key={row.action}>
+                    <td>{row.action}</td>
+                    <td>{row.impact}</td>
+                    <td>{row.owner}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </article>
       </div>
 

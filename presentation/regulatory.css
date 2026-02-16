@@ -176,6 +176,82 @@ h1 {
   font-weight: 800;
 }
 
+.domain-grid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.domain-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px;
+}
+
+.domain-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.domain-title {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.domain-reg {
+  margin-top: 6px;
+  font-family: "DM Serif Display", serif;
+  font-size: 1.02rem;
+}
+
+.domain-card p {
+  margin: 7px 0 0 0;
+  font-size: 12px;
+  line-height: 1.42;
+  color: #2f3440;
+}
+
+.consumer-grid {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.consumer-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px 11px;
+}
+
+.consumer-card h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.consumer-metric {
+  margin-top: 4px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.consumer-card p {
+  margin: 7px 0 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #2f3440;
+}
+
 .panel {
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -274,6 +350,10 @@ a.source-link:hover {
 }
 
 @media (max-width: 980px) {
+  .domain-grid {
+    grid-template-columns: 1fr;
+  }
+
   .panel.two-col {
     grid-template-columns: 1fr;
   }

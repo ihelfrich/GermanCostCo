@@ -36,6 +36,14 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function getScenarioRow(rows, scenario, strategy) {
+  return (rows || []).find((row) => row.scenario === scenario && row.strategy === strategy);
+}
+
+function getDecisionRow(rows, strategy) {
+  return (rows || []).find((row) => row.strategy === strategy);
+}
+
 function updateScrollProgress() {
   const progress = document.getElementById("scrollProgress");
   if (!progress) return;
@@ -83,6 +91,59 @@ function setMeta(payload) {
   const footer = document.getElementById("footerRefreshStatus");
   if (footer) {
     footer.textContent = `Refresh status: ${refresh.refresh_ok_sources ?? 0}/${refresh.refresh_total_sources ?? 0} sources OK`;
+  }
+}
+
+function renderSignature(payload) {
+  const macro = payload.macro || {};
+  const cultural = payload.cultural || {};
+  const decision = payload.key_decision || {};
+  const compliance = payload.executive_summary?.compliance_summary || {};
+
+  const memo = document.getElementById("signatureMemo");
+  if (memo) {
+    memo.innerHTML = `
+      Germany is not a low-demand market. It is a high-proof market. With consumer climate at
+      <strong>${formatNumber(macro.consumer_climate_index || 0, 1)}</strong>, savings pressure at
+      <strong>${formatNumber(macro.savings_rate_percent || 0, 1)}%</strong>, and cultural uncertainty avoidance at
+      <strong>${formatNumber(cultural.uncertainty_avoidance || 0, 0)}</strong>, the operating formula must prioritize
+      certainty, quantified value, and governance credibility. The recommended path
+      (<strong>${escapeHtml(decision.top_strategy || "-")}</strong>) is not the final destination. It is the
+      disciplined first option in a staged learning system.
+    `;
+  }
+
+  const pillars = [
+    {
+      title: "Certainty Before Excitement",
+      text: "Assortment and messaging must remove ambiguity with measurable product detail, not broad slogans.",
+    },
+    {
+      title: "Proof Before Price Promise",
+      text: "Membership adoption requires explicit savings arithmetic at category and basket level.",
+    },
+    {
+      title: "Governance As Growth Engine",
+      text: `High-severity findings (${formatNumber(compliance.high_severity_findings || 0, 0)}) are execution blockers, not legal footnotes.`,
+    },
+    {
+      title: "Options Over Commitments",
+      text: "Treat Germany expansion as a real-options sequence with hard gates and pre-defined stop rules.",
+    },
+  ];
+
+  const target = document.getElementById("signaturePillars");
+  if (target) {
+    target.innerHTML = pillars
+      .map(
+        (pillar) => `
+        <article class="pillar-card">
+          <h3>${escapeHtml(pillar.title)}</h3>
+          <p>${escapeHtml(pillar.text)}</p>
+        </article>
+      `
+      )
+      .join("");
   }
 }
 
@@ -209,13 +270,202 @@ function renderKpis(payload) {
   kpis.forEach(([label, value]) => {
     const card = document.createElement("article");
     card.className = "kpi-card";
-    const neg = typeof value === "string" && value.includes("-");
+    const numeric = typeof value === "number" ? value : Number.NaN;
+    const neg = (typeof value === "string" && value.includes("-")) || (Number.isFinite(numeric) && numeric < 0);
+    const pos = Number.isFinite(numeric) && numeric > 0;
     card.innerHTML = `
       <div class="kpi-label">${escapeHtml(label)}</div>
-      <div class="kpi-value ${neg ? "negative" : ""}">${escapeHtml(value)}</div>
+      <div class="kpi-value ${neg ? "negative" : pos ? "positive" : ""}">${escapeHtml(value)}</div>
     `;
     grid.appendChild(card);
   });
+}
+
+function renderOptionArchitecture(payload) {
+  const decisionRows = payload.decision_matrix || [];
+  const valuationRows = payload.valuation_summary || [];
+  const scenarioRows = payload.scenario_summary || [];
+  const topStrategy = payload?.key_decision?.top_strategy || "subsidized_65_to_20";
+
+  const standard = getDecisionRow(decisionRows, "standard_65");
+  const entry = getDecisionRow(decisionRows, "entry_35");
+  const top = getDecisionRow(decisionRows, topStrategy);
+
+  const standardNpv = valuationRows.find((row) => row.strategy === "standard_65");
+  const entryNpv = valuationRows.find((row) => row.strategy === "entry_35");
+  const topNpv = valuationRows.find((row) => row.strategy === topStrategy);
+
+  const topBase = getScenarioRow(scenarioRows, "base_case", topStrategy);
+  const topP10 = Number(topBase?.p10_contribution_eur || 0);
+  const topP50 = Number(topBase?.p50_contribution_eur || 0);
+
+  const optionProxyLow = Math.min(Number(entry?.weighted_mean_contribution_eur || 0), Number(top?.weighted_mean_contribution_eur || 0));
+  const optionProxyHigh = Math.max(Number(entry?.weighted_mean_contribution_eur || 0), Number(top?.weighted_mean_contribution_eur || 0));
+
+  const options = [
+    {
+      title: "A. Direct Transfer",
+      subtitle: "Standard EUR 65 fee",
+      score: standard?.weighted_mean_contribution_eur ?? 0,
+      loss: Number(standard?.weighted_prob_loss || 0),
+      npv: standardNpv?.npv_5y_eur ?? 0,
+      verdict: "Reject",
+      cls: "bad",
+      rationale: "High downside concentration and value destruction under current conditions.",
+    },
+    {
+      title: "B. Entry Tier",
+      subtitle: "EUR 35 low-friction architecture",
+      score: entry?.weighted_mean_contribution_eur ?? 0,
+      loss: Number(entry?.weighted_prob_loss || 0),
+      npv: entryNpv?.npv_5y_eur ?? 0,
+      verdict: "Viable fallback",
+      cls: "warn",
+      rationale: "Commercially positive with lower conversion friction, but weaker than the recommended design.",
+    },
+    {
+      title: "C. Subsidized Launch",
+      subtitle: `${topStrategy} architecture`,
+      score: top?.weighted_mean_contribution_eur ?? 0,
+      loss: Number(top?.weighted_prob_loss || 0),
+      npv: topNpv?.npv_5y_eur ?? 0,
+      verdict: "Recommended pilot",
+      cls: "good",
+      rationale: "Best risk-adjusted operating profile, still requiring disciplined capital sequencing.",
+    },
+    {
+      title: "D. Hybrid Real Option",
+      subtitle: "Day-pass / no-fee micro-pilot proxy",
+      score: `Proxy ${formatEur(optionProxyLow, 0)} to ${formatEur(optionProxyHigh, 0)}`,
+      loss: "Target <=10%",
+      npv: "Requires dedicated experiment",
+      verdict: "Test as option",
+      cls: "neutral",
+      rationale: "Used to buy information in high-resistance cohorts before scaling commitments.",
+    },
+  ];
+
+  const optionCards = document.getElementById("optionCards");
+  if (optionCards) {
+    optionCards.innerHTML = options
+      .map((option) => {
+        const score = typeof option.score === "number" ? formatEur(option.score, 0) : option.score;
+        const loss = typeof option.loss === "number" ? formatPct(option.loss, 1) : option.loss;
+        const npv = typeof option.npv === "number" ? formatEur(option.npv, 0) : option.npv;
+        return `
+          <article class="option-card ${option.cls}">
+            <div class="option-head">
+              <div>
+                <div class="option-title">${escapeHtml(option.title)}</div>
+                <div class="option-subtitle">${escapeHtml(option.subtitle)}</div>
+              </div>
+              <span class="badge ${option.cls === "bad" ? "bad" : option.cls === "good" ? "good" : "warn"}">${escapeHtml(option.verdict)}</span>
+            </div>
+            <div class="option-metrics">
+              <div><span>Weighted Mean</span><strong>${escapeHtml(score)}</strong></div>
+              <div><span>Loss Probability</span><strong>${escapeHtml(loss)}</strong></div>
+              <div><span>5Y NPV</span><strong>${escapeHtml(npv)}</strong></div>
+            </div>
+            <p>${escapeHtml(option.rationale)}</p>
+          </article>
+        `;
+      })
+      .join("");
+  }
+
+  const triggers = [
+    {
+      gate: "Pilot contribution corridor",
+      green: `>= ${formatEur(topP50, 0)} for 6 consecutive weeks`,
+      amber: `${formatEur(topP10, 0)} to ${formatEur(topP50, 0)} with improving trend`,
+      red: `< ${formatEur(topP10, 0)} for 3 consecutive weeks`,
+    },
+    {
+      gate: "Compliance severity",
+      green: "No high-severity findings",
+      amber: "Single high-severity finding with closed remediation <=14 days",
+      red: ">=2 high-severity findings or unresolved legal controls",
+    },
+    {
+      gate: "Membership adoption versus modeled baseline",
+      green: ">=100% of modeled base adoption",
+      amber: "80-100% with documented recovery plan",
+      red: "<80% and declining acquisition efficiency",
+    },
+    {
+      gate: "Capital trajectory",
+      green: "5Y NPV rebase improves by >=40% post-pilot",
+      amber: "Improves but remains structurally negative",
+      red: "No improvement after recalibration cycle",
+    },
+  ];
+
+  renderSimpleTable("triggerTable", triggers, [
+    { key: "gate", label: "Gate" },
+    { key: "green", label: "Green (Scale)" },
+    { key: "amber", label: "Amber (Hold)" },
+    { key: "red", label: "Red (Redesign/Stop)" },
+  ]);
+}
+
+function renderConsumerMindsetSection(payload) {
+  const macro = payload.macro || {};
+  const cultural = payload.cultural || {};
+  const labor = payload.labor_legal || {};
+  const benchmarks = payload.benchmarks || {};
+  const marketing = payload.marketing_audit || [];
+  const rejects = marketing.filter((row) => String(row.decision || "").toUpperCase() !== "CONSIDER").length;
+
+  const items = [
+    {
+      title: "Savings Trap Regime",
+      subtitle: `Climate ${formatNumber(macro.consumer_climate_index || 0, 1)} | Savings ${formatNumber(macro.savings_rate_percent || 0, 1)}%`,
+      text: "Fee value must be translated into explicit monthly household economics.",
+    },
+    {
+      title: "High Uncertainty Avoidance",
+      subtitle: `Hofstede UAI ${formatNumber(cultural.uncertainty_avoidance || 0, 0)}`,
+      text: "Conversion requires concrete technical detail and verifiable trust markers.",
+    },
+    {
+      title: "Long-Term Value Orientation",
+      subtitle: `Hofstede LTO ${formatNumber(cultural.long_term_orientation || 0, 0)}`,
+      text: "Position membership as a durable optimization engine, not a promo gimmick.",
+    },
+    {
+      title: "Indulgence Gap vs U.S.",
+      subtitle: `Germany ${formatNumber(cultural.indulgence || 0, 0)} vs U.S. ${formatNumber(benchmarks.us_indulgence_reference || 68, 0)}`,
+      text: "Rational proof-led communication should dominate impulse-led framing.",
+    },
+    {
+      title: "Information-Density Requirement",
+      subtitle: `${formatNumber(labor.standard_german_ad_information_cues_min || 7, 0)}+ cues vs U.S. ${formatNumber(labor.us_ad_information_cues_typical || 3, 0)}`,
+      text: "POS and paid assets need unit pricing, specs, and certifications by default.",
+    },
+    {
+      title: "Observed Creative Friction",
+      subtitle: `${formatNumber(rejects, 0)}/${formatNumber(marketing.length || 0, 0)} rejected`,
+      text: "Creative QA should be managed as a measurable conversion-control process.",
+    },
+  ];
+
+  const target = document.getElementById("consumerMindsetGrid");
+  if (!target) return;
+  target.innerHTML = items
+    .map(
+      (item) => `
+      <article class="option-card neutral">
+        <div class="option-head">
+          <div>
+            <div class="option-title">${escapeHtml(item.title)}</div>
+            <div class="option-subtitle">${escapeHtml(item.subtitle)}</div>
+          </div>
+        </div>
+        <p style="margin-top: 10px">${escapeHtml(item.text)}</p>
+      </article>
+    `
+    )
+    .join("");
 }
 
 function renderDecisionChart(decisionRows) {
@@ -584,6 +834,7 @@ async function init() {
   try {
     const payload = await loadData();
     setMeta(payload);
+    renderSignature(payload);
     renderThesis(payload);
     renderKpis(payload);
     renderReadiness(payload);
@@ -598,6 +849,8 @@ async function init() {
       { key: "weighted_cvar5_contribution_eur", label: "CVaR 5%", format: (v) => formatEur(v, 0) },
       { key: "risk_adjusted_score", label: "Risk Score", format: (v) => formatEur(v, 0) },
     ]);
+    renderOptionArchitecture(payload);
+    renderConsumerMindsetSection(payload);
 
     const scenarioRows = payload.scenario_summary || [];
     renderScenarioHeatmap(scenarioRows);

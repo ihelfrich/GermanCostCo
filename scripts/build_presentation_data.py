@@ -160,6 +160,7 @@ def build_payload() -> Dict:
         },
         "macro": config.get("macro", {}),
         "cultural": config.get("cultural", {}),
+        "benchmarks": config.get("benchmarks", {}),
         "labor_legal": config.get("labor_legal", {}),
         "operational_assumptions": config.get("operational_assumptions", {}),
         "financial_assumptions": config.get("financial_assumptions", {}),

@@ -2,7 +2,7 @@
 
 **Model Version:** 2.0.0  
 **As Of Date:** 2026-02-13  
-**Generated:** 2026-02-14 16:26 UTC
+**Generated:** 2026-02-16 01:42 UTC
 
 ## Executive Thesis
 Costco's Germany problem is not whether value retail works. It is whether the U.S. membership model can survive a market where household uncertainty is elevated, savings behavior is structurally defensive, and information/compliance expectations are materially stricter.
@@ -45,6 +45,15 @@ Costco's Germany problem is not whether value retail works. It is whether the U.
 | ehi_discounter_shift | EHI Retail Institute press release | https://www.ehi.org/presse/preisbewusstes-einkaufen-discounter-legen-zu/ | 2025 release highlights share gains of discounters and price-conscious shopping behavior. |
 | oecd_germany_snapshot | OECD Germany Economic Snapshot (Dec 2025) | https://www.oecd.org/en/topics/sub-issues/economic-surveys/germany-economic-snapshot.html | Growth and inflation outlook for 2026 used for scenario framing. |
 | imf_article_iv_2025 | IMF Article IV Staff Concluding Statement (Nov 26, 2025) | https://www.imf.org/en/news/articles/2025/11/26/mcs-112625-germany-staff-concluding-statement-of-the-2025-article-iv-mission | Downside risk framing for Germany growth and inflation uncertainty. |
+| pangv_unit_price | PAngV Section 4 (gesetze-im-internet) | https://www.gesetze-im-internet.de/pangv_2022/__4.html | Unit price must be displayed clearly with total price for covered goods. |
+| wistrg_pricing_fines | WiStrG 1954 Section 3 (gesetze-im-internet) | https://www.gesetze-im-internet.de/wistrg_1954/__3.html | Pricing-rule offenses can be fined up to EUR 25,000. |
+| verpackg_registration | VerpackG Sections 9 and 36 (gesetze-im-internet) | https://www.gesetze-im-internet.de/verpackg/__9.html | Pre-market registration duty and penalty framework up to EUR 100,000 / EUR 200,000. |
+| lksg_scope_and_fines | LkSG Sections 1 and 24 (gesetze-im-internet) | https://www.gesetze-im-internet.de/lksg/__1.html | Applies from 1,000 employees (2024 step) with sanctions up to EUR 800,000 and 2% turnover. |
+| arbzg_limits | ArbZG Sections 3 and 22 (gesetze-im-internet) | https://www.gesetze-im-internet.de/arbzg/__3.html | 8-hour daily cap (10-hour conditional extension) and fines up to EUR 30,000. |
+| gdpr_fine_tiers | GDPR Article 83 (EUR-Lex) | https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng | Administrative fines up to EUR 20m or 4% global annual turnover. |
+| bdsg_employee_data | BDSG Section 26 (gesetze-im-internet) | https://www.gesetze-im-internet.de/bdsg_2018/__26.html | Employee-data processing must be necessary and proportionate for employment purposes. |
+| eu_food_info_1169 | Regulation (EU) No 1169/2011 Articles 9 and 15 (EUR-Lex) | https://eur-lex.europa.eu/eli/reg/2011/1169/oj/eng | Mandatory food particulars and market-language requirements for food information. |
+| milog_fines | MiLoG Section 21 (gesetze-im-internet) | https://www.gesetze-im-internet.de/milog/__21.html | Minimum-wage violations can be fined up to EUR 500,000. |
 
 ## Methodological Architecture
 1. **Behavioral model:** household adoption probability blends net economic benefit, information-density effects, and cultural resistance.
@@ -95,6 +104,75 @@ Contribution = MembershipRevenue + MerchandiseContribution - Labor - FixedOpEx -
 | subsidized_65_to_20 | -159,379,778.54 | 0.00 | -1.00 |
 | entry_35 | -257,000,115.20 | 0.00 | -1.00 |
 | standard_65 | -377,902,367.09 | 0.00 | -1.00 |
+
+## Board Strategy Options (3+1)
+| option | design | weighted_mean_contribution_eur | weighted_prob_loss | npv_5y_eur | board_call |
+| --- | --- | --- | --- | --- | --- |
+| A. Direct transfer (standard_65) | EUR 65 annual fee, no subsidy, baseline U.S.-style messaging. | -2597122.2812844776 | 83.75 | -377902367.0920895 | REJECT (tail risk and negative value destruction). |
+| B. Entry tier (entry_35) | EUR 35 annual fee, low-friction membership onboarding. | 5185806.200314692 | 0.0 | -257000115.19674185 | VIABLE FALLBACK (commercially positive, weaker than top strategy). |
+| C. Subsidized launch (subsidized_65_to_20) | EUR 65 list fee with first-year subsidy to reduce upfront resistance. | 11275038.464204935 | 0.0 | -159379778.5417326 | RECOMMENDED PILOT (best risk-adjusted operating economics). |
+| D. Hybrid no-fee trial / day-pass pilot (proxy) | Localized no-fee or day-pass trial to reduce membership resistance in high-savings cohorts; designed as a learning option, not immediate national model. | Proxy range EUR 5,185,806 to 11,275,038 | Proxy <= 10% with strict spend-floor targeting | Proxy range EUR -257,000,115 to -159,379,779 | TEST AS OPTION (requires dedicated experiment design). |
+
+**Inference note:** Option D is intentionally treated as a strategic learning option with proxy ranges inferred from modeled Option B and Option C economics. It is not yet a fully parameterized Monte Carlo strategy in this run.
+
+## 5-Year Cash-Flow Projection Snapshot
+| strategy | year | cumulative_warehouses | free_cash_flow_eur | discounted_fcf_eur |
+| --- | --- | --- | --- | --- |
+| subsidized_65_to_20 | 1.00 | 1.00 | -44,626,964.61 | -41,130,842.96 |
+| subsidized_65_to_20 | 2.00 | 2.00 | -33,485,913.14 | -28,444,785.95 |
+| subsidized_65_to_20 | 3.00 | 4.00 | -65,378,930.47 | -51,185,694.13 |
+| subsidized_65_to_20 | 4.00 | 6.00 | -40,590,598.87 | -29,289,132.32 |
+| subsidized_65_to_20 | 5.00 | 8.00 | -14,028,099.20 | -9,329,323.17 |
+| entry_35 | 1.00 | 1.00 | -50,229,058.30 | -46,294,062.95 |
+| entry_35 | 2.00 | 2.00 | -45,201,934.52 | -38,397,022.25 |
+| entry_35 | 3.00 | 4.00 | -89,877,748.84 | -70,366,017.44 |
+| entry_35 | 4.00 | 6.00 | -79,006,254.93 | -57,008,881.85 |
+| entry_35 | 5.00 | 8.00 | -67,565,506.26 | -44,934,130.71 |
+| standard_65 | 1.00 | 1.00 | -57,597,122.28 | -53,084,905.33 |
+| standard_65 | 2.00 | 2.00 | -60,279,863.03 | -51,205,048.34 |
+| standard_65 | 3.00 | 4.00 | -120,733,785.54 | -94,523,458.45 |
+| standard_65 | 4.00 | 6.00 | -126,366,071.16 | -91,182,507.35 |
+| standard_65 | 5.00 | 8.00 | -132,181,118.08 | -87,906,447.63 |
+
+## Market, Competitive, and Consumer Reality
+| dimension | signal | strategy_implication |
+| --- | --- | --- |
+| Discounter intensity | Discounters at ~47.0% share (model baseline). | Cost leadership pressure remains structural; Costco must win on basket transparency + trust. |
+| Market concentration | Top-4 concentration modeled at ~85%. | Incumbents can retaliate quickly by region and category. |
+| Consumer defensive posture | GfK/NIM climate -24.1 with savings rate 20.0% indicates elevated precautionary behavior. | Membership friction must be offset by visible and quantified savings evidence. |
+| Price transparency requirement | German shoppers and law both require clear unit-price comparability (EUR/kg). | POS and digital copy must lead with concrete information cues and verifiable claims. |
+
+## Regulatory Environment (Dedicated Board Tab Summary)
+| effective_date | category | regulation | deadline_or_trigger | maximum_sanction | severity_score_1_to_5 | likelihood_score_1_to_5 | operational_owner | source_url |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-09-27 | Marketing Claims | Directive (EU) 2024/825 (EmpCo amendments to UCPD) | Member State transposition by 2026-03-27; application from 2026-09-27. | Penalties set by national transposition; treated as high legal exposure for claims. | 5.00 | 4.00 | Marketing + Legal | https://eur-lex.europa.eu/eli/dir/2024/825/oj/eng |
+| 2018-05-25 | Data Protection | GDPR Article 83 + BDSG Section 26 | Always-on for workforce analytics, monitoring, and CRM data handling. | GDPR administrative fines up to EUR 20m or 4% global turnover (whichever higher). | 5.00 | 3.00 | Data Governance + Legal | https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng |
+| 2019-01-01 | Packaging EPR | VerpackG Section 9 + Section 36 | Before first packaging is placed on the German market. | Administrative fines up to EUR 100,000 or EUR 200,000 depending offense. | 5.00 | 3.00 | Supply Chain + Legal | https://www.gesetze-im-internet.de/verpackg/__9.html |
+| 2024-01-01 | Supply Chain | LkSG Section 1 + Section 24 | Threshold reached and operations in scope. | Fines up to EUR 800,000 and up to 2% global turnover for very large entities. | 5.00 | 3.00 | Procurement + Compliance | https://www.gesetze-im-internet.de/lksg/__1.html |
+| 2026-01-01 | Wage Compliance | MiLoG Section 1 + Section 21 and BMAS MiLoV5 update | Payroll compliance from each wage-step effective date. | Administrative fines up to EUR 500,000 for key wage-payment violations. | 5.00 | 3.00 | Payroll + HR | https://www.bmas.de/DE/Service/Gesetze-und-Gesetzesvorhaben/fuenfte-mindestlohnanpassungsverordnung-milov5.html |
+| 1972-01-15 | Labor Governance | BetrVG Section 1 + Section 87 | Applies once establishment structure and representation conditions exist. | Operational injunction/escalation risk via co-determination disputes. | 4.00 | 4.00 | HR + Operations | https://www.gesetze-im-internet.de/betrvg/__87.html |
+| 1994-07-01 | Labor Time Controls | ArbZG Section 3 + Section 22 | Always-on scheduling and recordkeeping compliance. | Administrative fines up to EUR 30,000 for key violations. | 4.00 | 4.00 | Warehouse Ops + HR | https://www.gesetze-im-internet.de/arbzg/__3.html |
+| 2022-05-28 | Pricing Transparency | PAngV Section 4 + Section 20 with WiStrG 1954 Section 3 | Always-on obligation at point of sale and for price advertising. | Administrative fine up to EUR 25,000 (WiStrG Section 3(2)). | 4.00 | 4.00 | Commercial + Pricing Ops | https://www.gesetze-im-internet.de/pangv_2022/__4.html |
+| 2014-12-13 | Food Labeling | Regulation (EU) No 1169/2011 Article 9 and Article 15 | Applies to own-label and imported packaged food assortment. | Enforced via national food-law sanctions and product withdrawal risk. | 4.00 | 3.00 | Private Label QA + Legal | https://eur-lex.europa.eu/eli/reg/2011/1169/oj/eng |
+
+## Consumer Mindset and Cultural Differences
+| signal | evidence | implication_for_costco |
+| --- | --- | --- |
+| Consumer climate regime | GfK/NIM consumer climate at -24.1. | Demand exists, but conversion requires stronger certainty and trust signals. |
+| Precautionary savings behavior | Household savings rate 20.0% with inflation 2.2%. | Upfront fee friction must be neutralized with visible monthly savings logic. |
+| Uncertainty avoidance | Hofstede UAI 65 (high). | Vague slogans underperform; prove quality, compliance, and unit economics explicitly. |
+| Long-term orientation | Hofstede LTO 83 (high). | Value proposition should emphasize sustained annual savings, not one-off promotions. |
+| Indulgence gap versus U.S. | Germany indulgence 40 vs U.S. reference 68. | Impulse and experiential framing should be secondary to rational, concrete benefits. |
+| Information-density expectation | German copy expectation 7+ cues vs U.S. typical 3 (~2.33x density). | POS and digital assets require technical detail, unit pricing, certifications, and specs. |
+| Observed marketing stress-test | 2/3 tested creatives rejected (66.7%) on cue density. | Creative governance must be treated as a conversion control system. |
+
+### Commercial Translation Priorities
+| priority_action | why_it_matters | owner |
+| --- | --- | --- |
+| Mandate unit-price-first messaging | Aligns with both legal expectation (PAngV) and consumer risk-reduction behavior. | Commercial + Pricing Ops |
+| Adopt evidence-heavy copy templates | Raises conversion in high UAI context by replacing ambiguity with verifiable facts. | Marketing + Category |
+| Reframe membership as monthly savings instrument | Translates annual fee into household budgeting language under savings pressure. | Membership + CRM |
+| Publish compliance-by-design controls | Signals trust and reduces legal/operational friction in labor and claims governance. | Legal + HR + Operations |
 
 ## Mechanism Interpretation
 1. **Fee friction is first-order:** moving from standard to entry fee improves base-case contribution by EUR 7,356,645; the recommended design improves by EUR 13,027,383.

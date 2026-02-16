@@ -13,6 +13,10 @@ export interface ScenarioRow {
   strategy: string;
   mean_contribution_eur: number;
   prob_loss: number;
+  p10_contribution_eur?: number;
+  p50_contribution_eur?: number;
+  p90_contribution_eur?: number;
+  mean_adoption_rate?: number;
 }
 
 export interface CityRow {
@@ -27,6 +31,9 @@ export interface CityRow {
   risk_adjusted_city_score: number;
   city_prob_loss: number;
   expected_contribution_eur: number;
+  rollout_year?: number;
+  capex_estimate_eur?: number;
+  launch_readiness_score?: number;
 }
 
 export interface RegulatoryRow {
@@ -72,6 +79,11 @@ export interface PresentationData {
   meta?: AnyRecord;
   executive_summary?: ExecutiveSummary;
   key_decision?: KeyDecision;
+  macro?: AnyRecord;
+  cultural?: AnyRecord;
+  labor_legal?: AnyRecord;
+  benchmarks?: AnyRecord;
+  marketing_audit?: AnyRecord[];
   decision_matrix?: DecisionRow[];
   scenario_summary?: ScenarioRow[];
   city_portfolio_plan?: CityRow[];

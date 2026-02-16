@@ -26,6 +26,12 @@ export default function ExecutivePage() {
     [data]
   );
   const scenarioRows = useMemo(() => (data?.scenario_summary || []) as ScenarioRow[], [data]);
+  const topStrategy = data?.key_decision?.top_strategy || "subsidized_65_to_20";
+
+  const topBaseRow = useMemo(
+    () => scenarioRows.find((row) => row.scenario === "base_case" && row.strategy === topStrategy),
+    [scenarioRows, topStrategy]
+  );
 
   const kpis = useMemo(() => {
     const exec = data?.executive_summary || {};
@@ -53,6 +59,18 @@ export default function ExecutivePage() {
       },
     ];
   }, [data]);
+
+  const partnerInsights = useMemo(() => {
+    const macro = data?.macro || {};
+    const cultural = data?.cultural || {};
+    const compliance = data?.executive_summary?.compliance_summary || {};
+    return [
+      `Germany is a proof market, not a persuasion market: climate ${formatNumber(Number(macro.consumer_climate_index || 0), 1)} with savings pressure ${formatNumber(Number(macro.savings_rate_percent || 0), 1)}%.`,
+      `With uncertainty avoidance ${formatNumber(Number(cultural.uncertainty_avoidance || 0), 0)}, copy precision and unit transparency are conversion infrastructure.`,
+      `High-severity compliance findings (${formatNumber(Number(compliance.high_severity_findings || 0), 0)}) are growth blockers, not legal side-notes.`,
+      `Recommended architecture (${topStrategy}) is the first option in a staged expansion doctrine, not an unconditional rollout mandate.`,
+    ];
+  }, [data, topStrategy]);
 
   const chartRows = useMemo(
     () =>
@@ -116,6 +134,19 @@ export default function ExecutivePage() {
         ))}
       </div>
 
+      <article className="panel signature-panel">
+        <h2>Dr. Ian Helfrich Strategic Lens</h2>
+        <p className="panel-subtext">
+          Strategy quality comes from disciplined proof architecture: quantified customer value, legal credibility,
+          and explicit board triggers for scaling.
+        </p>
+        <ul className="insight-list">
+          {partnerInsights.map((insight) => (
+            <li key={insight}>{insight}</li>
+          ))}
+        </ul>
+      </article>
+
       <div className="panel-grid">
         <article className="panel">
           <h2>Risk-Adjusted Strategy Ranking</h2>
@@ -172,6 +203,45 @@ export default function ExecutivePage() {
           </div>
         </article>
       </div>
+
+      <article className="panel">
+        <h2>Board Gate Triggers</h2>
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Gate</th>
+                <th>Scale</th>
+                <th>Hold</th>
+                <th>Redesign</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Weekly pilot contribution</td>
+                <td>&gt;= {formatEur(Number(topBaseRow?.p50_contribution_eur || 0), 0)} for 6 weeks</td>
+                <td>
+                  {formatEur(Number(topBaseRow?.p10_contribution_eur || 0), 0)} to{" "}
+                  {formatEur(Number(topBaseRow?.p50_contribution_eur || 0), 0)} with improving trend
+                </td>
+                <td>&lt; {formatEur(Number(topBaseRow?.p10_contribution_eur || 0), 0)} for 3 weeks</td>
+              </tr>
+              <tr>
+                <td>Compliance severity</td>
+                <td>No high-severity findings</td>
+                <td>One high-severity finding closed in 14 days</td>
+                <td>Two or more unresolved high-severity findings</td>
+              </tr>
+              <tr>
+                <td>Adoption versus model</td>
+                <td>&gt;=100% of modeled base adoption</td>
+                <td>80-100% of modeled base adoption</td>
+                <td>&lt;80% with declining efficiency</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
     </section>
   );
 }

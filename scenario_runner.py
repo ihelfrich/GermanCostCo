@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -1126,6 +1126,7 @@ def write_analytical_paper(
     summary_df: pd.DataFrame,
     decision_df: pd.DataFrame,
     valuation_df: pd.DataFrame,
+    cashflow_df: pd.DataFrame,
     replication_df: pd.DataFrame,
     break_even_grid: pd.DataFrame,
     marketing_audit_df: pd.DataFrame,
@@ -1136,7 +1137,7 @@ def write_analytical_paper(
     output_dir: Path,
 ) -> Path:
     """Generate a board-grade analytical paper in Markdown from model outputs."""
-    timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     best = decision_df.sort_values("rank").iloc[0]
     recommended_strategy = str(best["strategy"])
 
@@ -1223,6 +1224,195 @@ def write_analytical_paper(
         ],
         decimals=2,
     )
+    entry_decision = decision_df[decision_df["strategy"] == "entry_35"].iloc[0]
+    standard_valuation = valuation_df[valuation_df["strategy"] == "standard_65"].iloc[0]
+    entry_valuation = valuation_df[valuation_df["strategy"] == "entry_35"].iloc[0]
+
+    option_proxy_low = float(min(entry_decision["weighted_mean_contribution_eur"], recommended_decision["weighted_mean_contribution_eur"]))
+    option_proxy_high = float(max(entry_decision["weighted_mean_contribution_eur"], recommended_decision["weighted_mean_contribution_eur"]))
+    option_npv_low = float(min(entry_valuation["npv_5y_eur"], recommended_valuation["npv_5y_eur"]))
+    option_npv_high = float(max(entry_valuation["npv_5y_eur"], recommended_valuation["npv_5y_eur"]))
+
+    options_df = pd.DataFrame(
+        [
+            {
+                "option": "A. Direct transfer (standard_65)",
+                "design": "EUR 65 annual fee, no subsidy, baseline U.S.-style messaging.",
+                "weighted_mean_contribution_eur": float(standard_decision["weighted_mean_contribution_eur"]),
+                "weighted_prob_loss": float(standard_decision["weighted_prob_loss"] * 100.0),
+                "npv_5y_eur": float(standard_valuation["npv_5y_eur"]),
+                "board_call": "REJECT (tail risk and negative value destruction).",
+            },
+            {
+                "option": "B. Entry tier (entry_35)",
+                "design": "EUR 35 annual fee, low-friction membership onboarding.",
+                "weighted_mean_contribution_eur": float(entry_decision["weighted_mean_contribution_eur"]),
+                "weighted_prob_loss": float(entry_decision["weighted_prob_loss"] * 100.0),
+                "npv_5y_eur": float(entry_valuation["npv_5y_eur"]),
+                "board_call": "VIABLE FALLBACK (commercially positive, weaker than top strategy).",
+            },
+            {
+                "option": f"C. Subsidized launch ({recommended_strategy})",
+                "design": "EUR 65 list fee with first-year subsidy to reduce upfront resistance.",
+                "weighted_mean_contribution_eur": float(recommended_decision["weighted_mean_contribution_eur"]),
+                "weighted_prob_loss": float(recommended_decision["weighted_prob_loss"] * 100.0),
+                "npv_5y_eur": float(top_npv),
+                "board_call": "RECOMMENDED PILOT (best risk-adjusted operating economics).",
+            },
+            {
+                "option": "D. Hybrid no-fee trial / day-pass pilot (proxy)",
+                "design": (
+                    "Localized no-fee or day-pass trial to reduce membership resistance in high-savings cohorts; "
+                    "designed as a learning option, not immediate national model."
+                ),
+                "weighted_mean_contribution_eur": f"Proxy range EUR {option_proxy_low:,.0f} to {option_proxy_high:,.0f}",
+                "weighted_prob_loss": "Proxy <= 10% with strict spend-floor targeting",
+                "npv_5y_eur": f"Proxy range EUR {option_npv_low:,.0f} to {option_npv_high:,.0f}",
+                "board_call": "TEST AS OPTION (requires dedicated experiment design).",
+            },
+        ]
+    )
+    options_md = dataframe_to_markdown(options_df, decimals=2)
+
+    cashflow_projection_df = cashflow_df[
+        cashflow_df["strategy"].isin(["standard_65", "entry_35", recommended_strategy])
+    ][["strategy", "year", "cumulative_warehouses", "free_cash_flow_eur", "discounted_fcf_eur"]].copy()
+    cashflow_projection_md = dataframe_to_markdown(cashflow_projection_df, decimals=2)
+
+    competition_df = pd.DataFrame(
+        [
+            {
+                "dimension": "Discounter intensity",
+                "signal": f"Discounters at ~{config['competition_assumptions']['discounter_market_share_percent']:.1f}% share (model baseline).",
+                "strategy_implication": "Cost leadership pressure remains structural; Costco must win on basket transparency + trust.",
+            },
+            {
+                "dimension": "Market concentration",
+                "signal": f"Top-4 concentration modeled at ~{config['competition_assumptions']['top4_market_concentration_percent']:.0f}%.",
+                "strategy_implication": "Incumbents can retaliate quickly by region and category.",
+            },
+            {
+                "dimension": "Consumer defensive posture",
+                "signal": (
+                    f"GfK/NIM climate {config['macro']['consumer_climate_index']} with savings rate "
+                    f"{config['macro']['savings_rate_percent']}% indicates elevated precautionary behavior."
+                ),
+                "strategy_implication": "Membership friction must be offset by visible and quantified savings evidence.",
+            },
+            {
+                "dimension": "Price transparency requirement",
+                "signal": "German shoppers and law both require clear unit-price comparability (EUR/kg).",
+                "strategy_implication": "POS and digital copy must lead with concrete information cues and verifiable claims.",
+            },
+        ]
+    )
+    competition_md = dataframe_to_markdown(competition_df, decimals=2)
+
+    benchmarks = config.get("benchmarks", {})
+    us_indulgence = float(benchmarks.get("us_indulgence_reference", 68.0))
+    german_indulgence = float(config["cultural"]["indulgence"])
+    info_cues_de = int(config["labor_legal"]["standard_german_ad_information_cues_min"])
+    info_cues_us = int(config["labor_legal"]["us_ad_information_cues_typical"])
+    cue_ratio = info_cues_de / max(info_cues_us, 1)
+
+    consumer_mindset_df = pd.DataFrame(
+        [
+            {
+                "signal": "Consumer climate regime",
+                "evidence": f"GfK/NIM consumer climate at {config['macro']['consumer_climate_index']}.",
+                "implication_for_costco": "Demand exists, but conversion requires stronger certainty and trust signals.",
+            },
+            {
+                "signal": "Precautionary savings behavior",
+                "evidence": (
+                    f"Household savings rate {config['macro']['savings_rate_percent']}% with inflation "
+                    f"{config['macro']['inflation_percent']}%."
+                ),
+                "implication_for_costco": "Upfront fee friction must be neutralized with visible monthly savings logic.",
+            },
+            {
+                "signal": "Uncertainty avoidance",
+                "evidence": f"Hofstede UAI {config['cultural']['uncertainty_avoidance']} (high).",
+                "implication_for_costco": "Vague slogans underperform; prove quality, compliance, and unit economics explicitly.",
+            },
+            {
+                "signal": "Long-term orientation",
+                "evidence": f"Hofstede LTO {config['cultural']['long_term_orientation']} (high).",
+                "implication_for_costco": "Value proposition should emphasize sustained annual savings, not one-off promotions.",
+            },
+            {
+                "signal": "Indulgence gap versus U.S.",
+                "evidence": f"Germany indulgence {german_indulgence:.0f} vs U.S. reference {us_indulgence:.0f}.",
+                "implication_for_costco": "Impulse and experiential framing should be secondary to rational, concrete benefits.",
+            },
+            {
+                "signal": "Information-density expectation",
+                "evidence": (
+                    f"German copy expectation {info_cues_de}+ cues vs U.S. typical {info_cues_us} "
+                    f"(~{cue_ratio:.2f}x density)."
+                ),
+                "implication_for_costco": "POS and digital assets require technical detail, unit pricing, certifications, and specs.",
+            },
+            {
+                "signal": "Observed marketing stress-test",
+                "evidence": (
+                    f"{rejected_ads}/{len(marketing_audit_df)} tested creatives rejected "
+                    f"({marketing_reject_rate:.1%}) on cue density."
+                ),
+                "implication_for_costco": "Creative governance must be treated as a conversion control system.",
+            },
+        ]
+    )
+    consumer_mindset_md = dataframe_to_markdown(consumer_mindset_df, decimals=2)
+
+    consumer_actions_df = pd.DataFrame(
+        [
+            {
+                "priority_action": "Mandate unit-price-first messaging",
+                "why_it_matters": "Aligns with both legal expectation (PAngV) and consumer risk-reduction behavior.",
+                "owner": "Commercial + Pricing Ops",
+            },
+            {
+                "priority_action": "Adopt evidence-heavy copy templates",
+                "why_it_matters": "Raises conversion in high UAI context by replacing ambiguity with verifiable facts.",
+                "owner": "Marketing + Category",
+            },
+            {
+                "priority_action": "Reframe membership as monthly savings instrument",
+                "why_it_matters": "Translates annual fee into household budgeting language under savings pressure.",
+                "owner": "Membership + CRM",
+            },
+            {
+                "priority_action": "Publish compliance-by-design controls",
+                "why_it_matters": "Signals trust and reduces legal/operational friction in labor and claims governance.",
+                "owner": "Legal + HR + Operations",
+            },
+        ]
+    )
+    consumer_actions_md = dataframe_to_markdown(consumer_actions_df, decimals=2)
+
+    regulatory_df = pd.DataFrame(config.get("regulatory_environment", []))
+    if not regulatory_df.empty:
+        regulatory_view_df = (
+            regulatory_df[
+                [
+                    "effective_date",
+                    "category",
+                    "regulation",
+                    "deadline_or_trigger",
+                    "maximum_sanction",
+                    "severity_score_1_to_5",
+                    "likelihood_score_1_to_5",
+                    "operational_owner",
+                    "source_url",
+                ]
+            ]
+            .sort_values(["severity_score_1_to_5", "likelihood_score_1_to_5", "effective_date"], ascending=[False, False, True])
+            .reset_index(drop=True)
+        )
+        regulatory_md = dataframe_to_markdown(regulatory_view_df, decimals=2)
+    else:
+        regulatory_md = "Regulatory register unavailable."
 
     hypothesis_df = pd.DataFrame(
         [
@@ -1501,6 +1691,26 @@ Contribution = MembershipRevenue + MerchandiseContribution - Labor - FixedOpEx -
 ## Capital Allocation View (5-Year)
 {valuation_md}
 
+## Board Strategy Options (3+1)
+{options_md}
+
+**Inference note:** Option D is intentionally treated as a strategic learning option with proxy ranges inferred from modeled Option B and Option C economics. It is not yet a fully parameterized Monte Carlo strategy in this run.
+
+## 5-Year Cash-Flow Projection Snapshot
+{cashflow_projection_md}
+
+## Market, Competitive, and Consumer Reality
+{competition_md}
+
+## Regulatory Environment (Dedicated Board Tab Summary)
+{regulatory_md}
+
+## Consumer Mindset and Cultural Differences
+{consumer_mindset_md}
+
+### Commercial Translation Priorities
+{consumer_actions_md}
+
 ## Mechanism Interpretation
 1. **Fee friction is first-order:** moving from standard to entry fee improves base-case contribution by EUR {fee_uplift_entry_vs_standard:,.0f}; the recommended design improves by EUR {fee_uplift_recommended_vs_standard:,.0f}.
 2. **Risk is design-dependent:** weighted loss probability drops from {standard_decision["weighted_prob_loss"]:.1%} (standard) to {recommended_decision["weighted_prob_loss"]:.1%} (recommended).
@@ -1638,6 +1848,7 @@ def run_full_analysis() -> Dict[str, object]:
         summary_df=summary_df,
         decision_df=decision_df,
         valuation_df=valuation_df,
+        cashflow_df=cashflow_df,
         replication_df=replication_df,
         break_even_grid=break_even_grid,
         marketing_audit_df=marketing_audit_df,

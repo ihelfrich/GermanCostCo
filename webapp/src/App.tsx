@@ -29,8 +29,8 @@ export default function App() {
         <div className="brand">
           <span className="dot" />
           <div>
-            <div className="title">Costco Germany 2026</div>
-            <div className="subtitle">Interactive Consulting Team Portal</div>
+            <div className="title">Dr. Ian Helfrich Strategy Lab</div>
+            <div className="subtitle">Costco Germany 2026 | Real-Options Command Center</div>
           </div>
         </div>
         <a
@@ -39,7 +39,7 @@ export default function App() {
           target="_blank"
           rel="noreferrer"
         >
-          GitHub Repo
+          Project Repository
         </a>
       </header>
 

@@ -238,6 +238,16 @@ h1 {
   margin-bottom: 0;
 }
 
+.signature-section .narrative-block {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(166, 27, 27, 0.06), transparent 44%),
+    #fcfbfa;
+}
+
+.signature-section .narrative-block p {
+  font-size: 1.01rem;
+}
+
 .essay-block {
   column-count: 2;
   column-gap: 26px;

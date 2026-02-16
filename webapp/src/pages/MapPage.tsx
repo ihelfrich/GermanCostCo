@@ -38,6 +38,20 @@ export default function MapPage() {
     [rows, wave, signal]
   );
 
+  const portfolioSummary = useMemo(() => {
+    const selected = rows.filter((row) => Number(row.rollout_year || -1) > 0);
+    const contribution = selected.reduce((acc, row) => acc + Number(row.expected_contribution_eur || 0), 0);
+    const capex = selected.reduce((acc, row) => acc + Number(row.capex_estimate_eur || 0), 0);
+    return {
+      selectedCount: selected.length,
+      totalContribution: contribution,
+      totalCapex: capex,
+      avgLoss: selected.length
+        ? selected.reduce((acc, row) => acc + Number(row.city_prob_loss || 0), 0) / selected.length
+        : 0,
+    };
+  }, [rows]);
+
   if (loading) return <div className="state-box">Loading city portfolio...</div>;
   if (error) return <div className="state-box error">{error}</div>;
 
@@ -48,6 +62,32 @@ export default function MapPage() {
         <h1>City Portfolio Map</h1>
         <p>Filter launch waves and board signals for location-level rollout sequencing.</p>
       </div>
+
+      <article className="panel">
+        <h2>Portfolio Doctrine</h2>
+        <p className="panel-subtext">
+          Sequence for option value, not for map coverage. Expansion rights are earned by contribution quality and
+          governance reliability.
+        </p>
+        <div className="kpi-grid">
+          <article className="kpi-card">
+            <div className="kpi-label">Selected Cities</div>
+            <div className="kpi-value">{portfolioSummary.selectedCount}</div>
+          </article>
+          <article className="kpi-card">
+            <div className="kpi-label">Total Expected Contribution</div>
+            <div className="kpi-value">{formatEur(portfolioSummary.totalContribution, 0)}</div>
+          </article>
+          <article className="kpi-card">
+            <div className="kpi-label">Total Capex</div>
+            <div className="kpi-value">{formatEur(portfolioSummary.totalCapex, 0)}</div>
+          </article>
+          <article className="kpi-card">
+            <div className="kpi-label">Average Loss Risk</div>
+            <div className="kpi-value">{formatPct(portfolioSummary.avgLoss, 1)}</div>
+          </article>
+        </div>
+      </article>
 
       <article className="panel">
         <div className="filter-row">

@@ -40,6 +40,38 @@ function parseDate(value) {
   return Number.isNaN(ts) ? null : new Date(ts);
 }
 
+function mapCategoryImplication(category) {
+  const key = String(category || "").toLowerCase();
+  if (key.includes("marketing claims")) {
+    return "Any broad sustainability language must be substantiated by verifiable evidence before release.";
+  }
+  if (key.includes("pricing")) {
+    return "Unit-price comparability is mandatory at shelf, promo, and digital touchpoints.";
+  }
+  if (key.includes("packaging")) {
+    return "Packaging registration and EPR controls are preconditions for product commercialization.";
+  }
+  if (key.includes("supply chain")) {
+    return "Supplier due-diligence controls must be embedded in procurement onboarding and monitoring.";
+  }
+  if (key.includes("labor governance")) {
+    return "Works-council co-determination directly constrains scheduling and monitoring deployment.";
+  }
+  if (key.includes("labor time")) {
+    return "Roster design must comply with statutory working-time caps and balancing windows.";
+  }
+  if (key.includes("data protection")) {
+    return "Employee/customer analytics must be necessity-based, documented, and audit-ready.";
+  }
+  if (key.includes("wage")) {
+    return "Payroll systems must hard-code statutory wage steps and documentation controls.";
+  }
+  if (key.includes("food labeling")) {
+    return "Label content and language requirements must be integrated into private-label QA workflows.";
+  }
+  return "Control design must be completed prior to scale decisions.";
+}
+
 async function loadData() {
   if (typeof window !== "undefined" && window.PRESENTATION_DATA) {
     return window.PRESENTATION_DATA;
@@ -88,6 +120,134 @@ function renderKpis(payload, rows) {
       </article>`
     )
     .join("");
+}
+
+function renderDomainCoverage(rows) {
+  const sorted = [...rows].sort((a, b) => {
+    const sev = Number(b.severity_score_1_to_5 || 0) - Number(a.severity_score_1_to_5 || 0);
+    if (sev !== 0) return sev;
+    const ad = parseDate(a.effective_date);
+    const bd = parseDate(b.effective_date);
+    return (ad ? ad.getTime() : 0) - (bd ? bd.getTime() : 0);
+  });
+
+  const grid = document.getElementById("domainGrid");
+  grid.innerHTML = sorted
+    .map((row) => {
+      const sev = Number(row.severity_score_1_to_5 || 0);
+      const lik = Number(row.likelihood_score_1_to_5 || 0);
+      const implication = mapCategoryImplication(row.category);
+      return `
+        <article class="domain-card">
+          <div class="domain-head">
+            <div class="domain-title">${escapeHtml(row.category || "Regulatory Domain")}</div>
+            <span class="pill ${severityClass(sev)}">Sev ${formatNumber(sev, 0)} | Lik ${formatNumber(lik, 0)}</span>
+          </div>
+          <div class="domain-reg">${escapeHtml(row.regulation || "-")}</div>
+          <p><strong>Trigger:</strong> ${escapeHtml(row.deadline_or_trigger || row.effective_date || "-")}</p>
+          <p><strong>Costco Implication:</strong> ${escapeHtml(implication)}</p>
+          <p><strong>Owner:</strong> ${escapeHtml(row.operational_owner || "-")}</p>
+          <p><strong>Sanction Envelope:</strong> ${escapeHtml(row.maximum_sanction || "-")}</p>
+          <a class="source-link" href="${escapeHtml(row.source_url || "#")}" target="_blank" rel="noopener noreferrer">Primary source</a>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+function renderConsumerMindset(payload) {
+  const macro = payload.macro || {};
+  const cultural = payload.cultural || {};
+  const labor = payload.labor_legal || {};
+  const benchmarks = payload.benchmarks || {};
+  const marketing = payload.marketing_audit || [];
+
+  const consumerRows = [
+    {
+      title: "Savings Trap Regime",
+      metric: `Climate ${formatNumber(macro.consumer_climate_index || 0, 1)} | Savings ${formatNumber(macro.savings_rate_percent || 0, 1)}%`,
+      implication: "Membership fee framing must convert annual cost into visible monthly savings proof.",
+    },
+    {
+      title: "Uncertainty Avoidance",
+      metric: `Hofstede UAI ${formatNumber(cultural.uncertainty_avoidance || 0, 0)}`,
+      implication: "Conversion depends on concrete specifications, guarantees, and certification-backed claims.",
+    },
+    {
+      title: "Long-Term Orientation",
+      metric: `Hofstede LTO ${formatNumber(cultural.long_term_orientation || 0, 0)}`,
+      implication: "Position membership as annual household optimization, not short-term promotional excitement.",
+    },
+    {
+      title: "Indulgence Gap vs U.S.",
+      metric: `Germany ${formatNumber(cultural.indulgence || 0, 0)} vs U.S. ${formatNumber(benchmarks.us_indulgence_reference || 68, 0)}`,
+      implication: "Rational value architecture outperforms impulse framing for basket conversion.",
+    },
+    {
+      title: "Information Density Expectation",
+      metric: `${formatNumber(labor.standard_german_ad_information_cues_min || 7, 0)}+ cues vs U.S. ~${formatNumber(labor.us_ad_information_cues_typical || 3, 0)}`,
+      implication: "POS and digital copy must embed unit pricing, specs, and verifiable standards by default.",
+    },
+    {
+      title: "Observed Creative Stress Test",
+      metric: `${formatNumber(marketing.filter((r) => String(r.decision).toUpperCase() !== "CONSIDER").length, 0)}/${formatNumber(marketing.length || 0, 0)} rejected`,
+      implication: "Creative governance must be treated as a measurable conversion control system.",
+    },
+  ];
+
+  const cards = document.getElementById("consumerCards");
+  cards.innerHTML = consumerRows
+    .map(
+      (row) => `
+      <article class="consumer-card">
+        <h3>${escapeHtml(row.title)}</h3>
+        <div class="consumer-metric">${escapeHtml(row.metric)}</div>
+        <p>${escapeHtml(row.implication)}</p>
+      </article>
+    `
+    )
+    .join("");
+
+  const actions = [
+    {
+      action: "Mandate unit-price-first communication",
+      impact: "Improves legal compliance and perceived transparency in high-UAI context.",
+      owner: "Commercial + Pricing Ops",
+    },
+    {
+      action: "Institutionalize 7+ cue templates for all copy",
+      impact: "Reduces ambiguity and lifts trust-adjusted conversion probability.",
+      owner: "Marketing + Category",
+    },
+    {
+      action: "Reframe fee as monthly net-benefit metric",
+      impact: "Directly addresses savings-trap psychology and budgeting mindset.",
+      owner: "Membership + CRM",
+    },
+    {
+      action: "Publish compliance-by-design controls at launch",
+      impact: "Signals reliability and lowers legal/operational execution friction.",
+      owner: "Legal + HR + Operations",
+    },
+  ];
+
+  const head = `
+    <tr>
+      <th>Priority Action</th>
+      <th>Why It Matters</th>
+      <th>Owner</th>
+    </tr>`;
+  const body = actions
+    .map(
+      (row) => `
+      <tr>
+        <td><strong>${escapeHtml(row.action)}</strong></td>
+        <td>${escapeHtml(row.impact)}</td>
+        <td>${escapeHtml(row.owner)}</td>
+      </tr>`
+    )
+    .join("");
+  document.getElementById("consumerActionTable").innerHTML = `<table><thead>${head}</thead><tbody>${body}</tbody></table>`;
 }
 
 function renderTimeline(rows) {
@@ -312,6 +472,8 @@ async function init() {
 
     renderMeta(payload, rows);
     renderKpis(payload, rows);
+    renderDomainCoverage(rows);
+    renderConsumerMindset(payload);
     renderTimeline(rows);
     renderRiskMatrix(rows);
     renderOwnerChart(rows);
